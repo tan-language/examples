@@ -1,24 +1,28 @@
-; (use [html-from-expr] html)
+(use [html-from-expr] html)
 (use network/http)
 
-((let index-handler (Func []
-    """
-    <p>Go to <a href="/details">Details</a></p>
-    """
-)))
+; #todo drinks errors, investigate
+(let index-handler (Func []
+    (html-from-expr
+        '(p
+            "Go to " (a {:href "/details"} "Details")
+        )
+    )
+))
 
-((let details-handler (Func []
-    """
-    <p>No details</p>
-    <p>Go to <a href="/">Home</a></p>
-    """
-)))
+(let details-handler (Func []
+    (html-from-expr '[
+        (p "No details")
+        (p "Go to " (a {:href "/"} "Home"))
+    ])
+))
 
-((let error-handler (Func [req]
+(let error-handler (Func [req]
+    ; example with string.
     """
     <p>Error ${(req :uri)}</p>
     """
-)))
+))
 
 (let router (Func [req]
     (let uri (req :uri))
