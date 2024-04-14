@@ -1,1 +1,34 @@
-; #todo
+; (use [html-from-expr] html)
+(use network/http)
+
+((let index-handler (Func []
+    """
+    <p>Go to <a href="/details">Details</a></p>
+    """
+)))
+
+((let details-handler (Func []
+    """
+    <p>No details</p>
+    <p>Go to <a href="/">Home</a></p>
+    """
+)))
+
+((let error-handler (Func [req]
+    """
+    <p>Error ${(req :uri)}</p>
+    """
+)))
+
+(let router (Func [req]
+    (let uri (req :uri))
+    (cond
+        (= "/" uri) (index-handler req)
+        (= "/details" uri) (details-handler req)
+        else (error-handler req)
+    )
+))
+
+(echo "listening at localhost:8000...")
+
+(http/serve {:port 8000} router)

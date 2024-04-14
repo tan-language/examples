@@ -2,6 +2,12 @@
 
 A collection of examples for the Tan Language.
 
+## Run the examples
+
+```sh
+tan r http-service
+```
+
 ## Status
 
 This is an _experimental_ project, not intended for production use.
