@@ -1,6 +1,7 @@
 (use [html-from-expr] html)
 (use network/http)
 
+; #idea (Str (HTML ...))
 ; #todo drinks errors, investigate
 (let index-handler (Func []
     (html-from-expr
