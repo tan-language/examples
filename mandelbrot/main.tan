@@ -1,23 +1,40 @@
 ; #ref https://github.com/ProgrammingRust/mandelbrot/blob/single-threaded/src/main.rs
 
+; #wip not working yet
+
+; #todo what are good values for upper-left, lower-right, and limit?
+; #todo need a LUT to convert t (escape-time) values to colors.
+; #todo need Int32 type or I32
+
 ; #todo consider /codecs/png, /png, graphics/png, graphics/codecs/png, ...
-(use /image/png)
+; (use /image/png)
+
+(use [Complex + * abs] /math/complex)
 
 (let width 512)
 (let height 512)
 
-; #todo bounded array
+(let upper-left (Complex 10.0 10.0))
+(let lower-right (Complex 20.0 0.0))
+
+; #todo bounded array -> Buffer (ArrayBuffer, ByteArray)
 ; #todo multi-dimensional array
 ; #todo what is a good name?
 (let pixels [])
 
+(let pixel-to-point (Func [pixel]
+))
+
+; #todo consider returning (Maybe Int)
 ; #todo find a good name.
 (let mandelbrot (Func [c limit]
-    (let z (Complex 0.0 0.0))
-    (for [i 0..limit]
+    (let #mut z (Complex 0.0 0.0))
+    (for [t 0..limit]
         (if (> (abs z) 2.0)
-            (return i)
+            (return t)
         )
+        ; z = z * z + c;
+        (set! z (+ (* z z) c))
     )
     0
 ))
@@ -34,4 +51,5 @@
 
 ; #todo consider write-image, write-file, etc...
 ; #todo what should be the order of arguments?
+; #todo encoder for various pixel types?
 (png/write "mandelbrot.png", pixels)
