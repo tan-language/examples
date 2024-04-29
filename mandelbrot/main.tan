@@ -2,17 +2,19 @@
 
 ; #wip not working yet
 
-; #todo what are good values for upper-left, lower-right, and limit?
 ; #todo need a LUT to convert t (escape-time) values to colors.
 ; #todo need Int32 type or I32
 
 ; #todo consider /codecs/png, /png, graphics/png, graphics/codecs/png, ...
+; #todo what about using `raster` instead of `image`?
 ; (use /image/png)
 
 (use [Complex + * abs] /math/complex)
 
-(let width 512)
-(let height 512)
+(let [re-min im-min re-max im-max] [-2.0 -2.0 2.0 2.0])
+
+(let width 1024.0)
+(let height 1024.0)
 
 (let upper-left (Complex 10.0 10.0))
 (let lower-right (Complex 20.0 0.0))
@@ -20,13 +22,9 @@
 ; #todo bounded array -> Buffer (ArrayBuffer, ByteArray)
 ; #todo multi-dimensional array
 ; #todo what is a good name?
-(let pixels [])
-
-(let pixel-to-point (Func [pixel]
-))
+(let img [])
 
 ; #todo consider returning (Maybe Int)
-; #todo find a good name.
 (let mandelbrot (Func [c limit]
     (let #mut z (Complex 0.0 0.0))
     (for [t 0..limit]
@@ -39,12 +37,31 @@
     0
 ))
 
-(for [y 0..height]
-    (for [x 0..width]
-        (let point (pixel-to-point x y))
-        (let c (mandelbrot point))
-        (let i (+ (* width y) x))
-        (put pixels i c)
+(for [y 0.0..height]
+    ; im = ((y / height) * (im-max - im-min)) + im-min
+    (let im
+        (+
+            (*
+                (/ y height)
+                (- im-max im-min))
+            im-min
+        )
+    )
+    (for [x 0.0..width]
+        ; re = ((x / width) * (re-max - re-min)) + re-min
+        (let re
+            (+
+                (*
+                    (/ x width)
+                    (- re-max re-min))
+                re-min
+            )
+        )
+        (let z (Complex re im))
+        (let color (U8 (mandelbrot z 200)))
+        (echo "${y}x${x} = ${color}")
+        ; (let i (+ (* width y) x))
+        ; (put pixels i c)
         ; (poke! pixels i c)
     )
 )
@@ -52,4 +69,4 @@
 ; #todo consider write-image, write-file, etc...
 ; #todo what should be the order of arguments?
 ; #todo encoder for various pixel types?
-(png/write "mandelbrot.png", pixels)
+; (png/write "mandelbrot.png", pixels)
