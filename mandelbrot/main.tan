@@ -12,9 +12,7 @@
 (use [Complex + * abs] /math/complex)
 
 (let [re-min im-min re-max im-max] [-2.0 -2.0 2.0 2.0])
-
-(let width 1024.0)
-(let height 1024.0)
+(let [width height] [1024.0 1024.0])
 
 ; #todo bounded array -> Buffer (ArrayBuffer, ByteArray)
 ; #todo multi-dimensional array
@@ -23,7 +21,7 @@
 
 ; #todo consider returning (Maybe Int)
 (let mandelbrot (Func [c limit]
-    (let #mut z (Complex 0.0 0.0))
+    (let #mut z (Complex 0.0))
     (for [t 0..limit]
         (if (> (abs z) 2.0)
             (return t)
@@ -66,4 +64,4 @@
 ; #todo consider write-image, write-file, etc...
 ; #todo what should be the order of arguments?
 ; #todo encoder for various pixel types?
-; (png/write "mandelbrot.png", pixels)
+; (png/write-to-file "mandelbrot.png", pixels)
