@@ -16,9 +16,6 @@
 (let width 1024.0)
 (let height 1024.0)
 
-(let upper-left (Complex 10.0 10.0))
-(let lower-right (Complex 20.0 0.0))
-
 ; #todo bounded array -> Buffer (ArrayBuffer, ByteArray)
 ; #todo multi-dimensional array
 ; #todo what is a good name?
