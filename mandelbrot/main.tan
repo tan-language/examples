@@ -12,9 +12,7 @@
 (use [Complex + * abs] /math/complex)
 
 (let [re-min im-min re-max im-max] [-2.0 -2.0 2.0 2.0])
-(let [width height] [1024 1024])
-
-; #todo need conversions between Int, Float, U8.
+(let [width height] [512 512])
 
 ; #todo what is a good name?
 (let img (Buffer (* width height)))
@@ -32,34 +30,36 @@
     0
 ))
 
-(for [y 0.0..height]
+(for [y 0..height]
     ; im = ((y / height) * (im-max - im-min)) + im-min
     (let im
         (+
             (*
-                (/ y height)
+                ; #todo consider returning Float for division of Int?
+                ; #todo and have special division operator if I want integer division, e.g. (int-div x y)
+                (/ (Float y) (Float height))
                 (- im-max im-min))
             im-min
         )
     )
-    (for [x 0.0..width]
+    (for [x 0..width]
         ; re = ((x / width) * (re-max - re-min)) + re-min
         (let re
             (+
                 (*
-                    (/ x width)
+                    (/ (Float x) (Float width))
                     (- re-max re-min))
                 re-min
             )
         )
         (let z (Complex re im))
         (let color (U8 (mandelbrot z 200)))
-        ; (echo "${y}x${x} = ${color}")
+        (echo "${y}x${x} = ${color}")
         (put img (+ (* width y) x) color)
     )
 )
 
-; (echo img)
+(echo img)
 
 ; #todo consider write-image, write-file, etc...
 ; #todo what should be the order of arguments?
