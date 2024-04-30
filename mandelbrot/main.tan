@@ -12,15 +12,15 @@
 (use [Complex + * abs] /math/complex)
 
 (let [re-min im-min re-max im-max] [-2.0 -2.0 2.0 2.0])
-(let [width height] [512 512])
+(let [width height] [256 256])
 
 ; #todo what is a good name?
 (let img (Buffer (* width height)))
 
 ; #todo consider returning (Maybe Int)
-(let mandelbrot (Func [c limit]
+(let mandelbrot (Func [c]
     (let #mut z (Complex 0.0))
-    (for [t 0..limit]
+    (for [t 0..48]
         (if (> (abs z) 2.0)
             (return t)
         )
@@ -30,6 +30,11 @@
     0
 ))
 
+(let re-delta (- re-max re-min))
+(let im-delta (- im-max im-min))
+
+(let #mut i 0)
+
 (for [y 0..height]
     ; im = ((y / height) * (im-max - im-min)) + im-min
     (let im
@@ -38,7 +43,8 @@
                 ; #todo consider returning Float for division of Int?
                 ; #todo and have special division operator if I want integer division, e.g. (int-div x y)
                 (/ (Float y) (Float height))
-                (- im-max im-min))
+                im-delta
+            )
             im-min
         )
     )
@@ -48,18 +54,20 @@
             (+
                 (*
                     (/ (Float x) (Float width))
-                    (- re-max re-min))
+                    re-delta
+                )
                 re-min
             )
         )
         (let z (Complex re im))
-        (let color (U8 (mandelbrot z 200)))
-        (echo "${y}x${x} = ${color}")
-        (put img (+ (* width y) x) color)
+        (let color (U8 (mandelbrot z)))
+        (put img i color)
+        (set! i (+ i 1))
     )
+    (echo "${y}")
 )
 
-(echo img)
+; (echo img)
 
 ; #todo consider write-image, write-file, etc...
 ; #todo what should be the order of arguments?
