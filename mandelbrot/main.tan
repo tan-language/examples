@@ -12,12 +12,12 @@
 (use [Complex + * abs] /math/complex)
 
 (let [re-min im-min re-max im-max] [-2.0 -2.0 2.0 2.0])
-(let [width height] [1024.0 1024.0])
+(let [width height] [1024 1024])
 
-; #todo bounded array -> Buffer (ArrayBuffer, ByteArray)
-; #todo multi-dimensional array
+; #todo need conversions between Int, Float, U8.
+
 ; #todo what is a good name?
-(let img [])
+(let img (Buffer (* width height)))
 
 ; #todo consider returning (Maybe Int)
 (let mandelbrot (Func [c limit]
@@ -54,12 +54,12 @@
         )
         (let z (Complex re im))
         (let color (U8 (mandelbrot z 200)))
-        (echo "${y}x${x} = ${color}")
-        ; (let i (+ (* width y) x))
-        ; (put pixels i c)
-        ; (poke! pixels i c)
+        ; (echo "${y}x${x} = ${color}")
+        (put img (+ (* width y) x) color)
     )
 )
+
+; (echo img)
 
 ; #todo consider write-image, write-file, etc...
 ; #todo what should be the order of arguments?
