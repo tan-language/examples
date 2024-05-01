@@ -1,14 +1,12 @@
 ; #ref https://github.com/ProgrammingRust/mandelbrot/blob/single-threaded/src/main.rs
 
-; #wip not working yet
-
 ; #todo need a LUT to convert t (escape-time) values to colors.
-; #todo need Int32 type or I32
 
 ; #todo consider /codecs/png, /png, graphics/png, graphics/codecs/png, ...
 ; #todo what about using `raster` instead of `image`?
 ; (use /image/png)
 
+(use /fs)
 (use [Complex + * abs] /math/complex)
 
 (let [re-min im-min re-max im-max] [-2.0 -2.0 2.0 2.0])
@@ -53,6 +51,7 @@
         (let re
             (+
                 (*
+                    ; #todo can optimize further, width is constant, can go into re-delta.
                     (/ (Float x) (Float width))
                     re-delta
                 )
@@ -67,9 +66,11 @@
     (echo "${y}")
 )
 
-; (echo img)
-
 ; #todo consider write-image, write-file, etc...
 ; #todo what should be the order of arguments?
 ; #todo encoder for various pixel types?
 ; (png/write-to-file "mandelbrot.png", pixels)
+
+(let file (fs/create "mandelbrot.png"))
+; (let coder (png/Coder width height :gray-8 file))
+; (write coder img)
