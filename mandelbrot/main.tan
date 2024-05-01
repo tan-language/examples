@@ -1,19 +1,15 @@
-; #ref https://github.com/ProgrammingRust/mandelbrot/blob/single-threaded/src/main.rs
-
 (use /fs)
 (use [Coder write] /image/png)
 (use [Complex + * abs] /math/complex)
 
 (let [re-min im-min re-max im-max] [-2.0 -2.0 2.0 2.0])
-(let [width height] [256 256])
+(let [width height] [512 512])
 
-; #todo what is a good name?
 (let img (Buffer (* width height)))
 
-; #todo consider returning (Maybe Int)
 (let mandelbrot (Func [c]
     (let #mut z (Complex 0.0))
-    (for [t 0..48]
+    (for [t 0..64]
         (if (> (abs z) 2.0)
             (return t)
         )
@@ -22,14 +18,8 @@
     0
 ))
 
-; #todo consider returning Float for division of Int?
-; #todo and have special division operator if I want integer division, e.g. (int-div x y)
-
-(let re-delta (- re-max re-min))
-(let im-delta (- im-max im-min))
-
 (let re-scale (/ (- re-max re-min) (Float width)))
-; #todo factor-in reversed sceen y-axis.
+; #todo the im-scale is inverted to reflect the inverted screen-space y-axis.
 (let im-scale (/ (- im-max im-min) (Float height)))
 
 (let #mut i 0)
