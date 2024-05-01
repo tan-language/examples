@@ -1,55 +1,42 @@
-; #ref https://github.com/ProgrammingRust/mandelbrot/blob/single-threaded/src/main.rs
-
-; #wip not working yet
-
-; #todo what are good values for upper-left, lower-right, and limit?
-; #todo need a LUT to convert t (escape-time) values to colors.
-; #todo need Int32 type or I32
-
-; #todo consider /codecs/png, /png, graphics/png, graphics/codecs/png, ...
-; (use /image/png)
-
+(use /fs)
+(use [Coder write] /image/png)
 (use [Complex + * abs] /math/complex)
 
-(let width 512)
-(let height 512)
+(let [re-min im-min re-max im-max] [-2.0 -2.0 2.0 2.0])
+(let [width height] [512 512])
 
-(let upper-left (Complex 10.0 10.0))
-(let lower-right (Complex 20.0 0.0))
+(let img (Buffer (* width height)))
 
-; #todo bounded array -> Buffer (ArrayBuffer, ByteArray)
-; #todo multi-dimensional array
-; #todo what is a good name?
-(let pixels [])
-
-(let pixel-to-point (Func [pixel]
-))
-
-; #todo consider returning (Maybe Int)
-; #todo find a good name.
-(let mandelbrot (Func [c limit]
-    (let #mut z (Complex 0.0 0.0))
-    (for [t 0..limit]
+(let mandelbrot (Func [c]
+    (let #mut z (Complex 0.0))
+    (for [t 0..64]
         (if (> (abs z) 2.0)
             (return t)
         )
-        ; z = z * z + c;
         (set! z (+ (* z z) c))
     )
     0
 ))
 
+(let re-scale (/ (- re-max re-min) (Float width)))
+; #todo the im-scale is inverted to reflect the inverted screen-space y-axis.
+(let im-scale (/ (- im-max im-min) (Float height)))
+
+(let #mut i 0)
+
 (for [y 0..height]
+    (let im (+ im-min (* im-scale (Float y))))
     (for [x 0..width]
-        (let point (pixel-to-point x y))
-        (let c (mandelbrot point))
-        (let i (+ (* width y) x))
-        (put pixels i c)
-        ; (poke! pixels i c)
+        (let re (+ re-min (* re-scale (Float x))))
+        (let z (Complex re im))
+        (let color (U8 (mandelbrot z)))
+        (put img i color)
+        (set! i (+ i 1))
     )
+    (echo "${y}")
 )
 
-; #todo consider write-image, write-file, etc...
-; #todo what should be the order of arguments?
-; #todo encoder for various pixel types?
-(png/write "mandelbrot.png", pixels)
+(let file (fs/create "mandelbrot.png"))
+(let coder (Coder width height :gray-8 file))
+
+(write coder img)
