@@ -8,6 +8,10 @@ A collection of examples for the Tan Language.
 tan r http-service
 ```
 
+```sh
+tan r mandlebrot
+```
+
 ## Status
 
 This is an _experimental_ project, not intended for production use.

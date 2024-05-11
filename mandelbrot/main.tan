@@ -8,21 +8,22 @@
 (let img (Buffer (* width height)))
 
 (let mandelbrot (Func [c]
-    (let #mut z (Complex 0.0))
+    (let #var z (Complex 0.0))
     (for [t 0..64]
         (if (> (abs z) 2.0)
             (return t)
         )
-        (set! z (+ (* z z) c))
+        (<- z (+ (* z z) c))
     )
     0
 ))
 
+; #todo rever the im-scale to reflect the inverted screen-space y-axis.
+
 (let re-scale (/ (- re-max re-min) (Float width)))
-; #todo the im-scale is inverted to reflect the inverted screen-space y-axis.
 (let im-scale (/ (- im-max im-min) (Float height)))
 
-(let #mut i 0)
+(let #var i 0)
 
 (for [y 0..height]
     (let im (+ im-min (* im-scale (Float y))))
@@ -31,12 +32,11 @@
         (let z (Complex re im))
         (let color (U8 (mandelbrot z)))
         (put img i color)
-        (set! i (+ i 1))
+        (+<- i 1)
     )
     (echo "${y}")
 )
 
 (let file (fs/create "mandelbrot.png"))
 (let coder (Coder width height :gray-8 file))
-
 (write coder img)
