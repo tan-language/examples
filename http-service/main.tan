@@ -1,5 +1,5 @@
-(use [html-from-expr] html)
-(use network/http)
+(use [html-from-expr] /html)
+(use [serve] /network/http/server)
 
 ; #idea (Str (HTML ...))
 ; #todo drinks errors, investigate
@@ -36,4 +36,4 @@
 
 (echo "listening at localhost:8000...")
 
-(http/serve {:port 8000} router)
+(serve {:port 8000} router)
