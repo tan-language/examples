@@ -3,7 +3,7 @@
 
 ; #idea (Str (HTML ...))
 ; #todo drinks errors, investigate
-(let index-handler (Func []
+(def index-handler (Func []
     (html-from-expr
         '(p
             "Go to " (a {:href "/details"} "Details")
@@ -11,21 +11,21 @@
     )
 ))
 
-(let details-handler (Func []
+(def details-handler (Func []
     (html-from-expr '[
         (p "No details")
         (p "Go to " (a {:href "/"} "Home"))
     ])
 ))
 
-(let error-handler (Func [req]
+(def error-handler (Func [req]
     ; example with string.
     """
     <p>Error ${(req :uri)}</p>
     """
 ))
 
-(let router (Func [req]
+(def router (Func [req]
     (let uri (req :uri))
     (cond
         (= "/" uri) (index-handler req)
