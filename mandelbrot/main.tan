@@ -2,10 +2,11 @@
 (use [Coder write] /image/png)
 (use [Complex + * abs] /math/complex)
 
-(let [re-min im-min re-max im-max] [-2.0 -2.0 2.0 2.0])
-(let [width height] [512 512])
-
-(let img (Buffer (* width height)))
+(let
+    [re-min im-min re-max im-max] [-2.0 -2.0 2.0 2.0]
+    [width height] [512 512]
+    img (Buffer (* width height))
+)
 
 (let mandelbrot (Func [c]
     (let #var z (Complex 0.0))
@@ -18,25 +19,30 @@
     0
 ))
 
-; #todo rever the im-scale to reflect the inverted screen-space y-axis.
-
-(let re-scale (/ (- re-max re-min) (Float width)))
-(let im-scale (/ (- im-max im-min) (Float height)))
+(let
+    re-scale (/ (- re-max re-min) (Float width))
+    ; #todo revert the im-scale to reflect the inverted screen-space y-axis.
+    im-scale (/ (- im-max im-min) (Float height))
+)
 
 (let #var i 0)
 
 (for [y 0..height]
     (let im (+ im-min (* im-scale (Float y))))
     (for [x 0..width]
-        (let re (+ re-min (* re-scale (Float x))))
-        (let z (Complex re im))
-        (let color (U8 (mandelbrot z)))
+        (let
+            re (+ re-min (* re-scale (Float x)))
+            z (Complex re im)
+            color (U8 (mandelbrot z))
+        )
         (put img i color)
         (+<- i 1)
     )
     (echo "${y}")
 )
 
-(let file (fs/create "mandelbrot.png"))
-(let coder (Coder width height :gray-8 file))
+(let
+    file (fs/create "mandelbrot.png")
+    coder (Coder width height :gray-8 file)
+)
 (write coder img)
