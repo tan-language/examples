@@ -29,4 +29,4 @@ for details.
 
 ## Copyright
 
-Copyright © 2024 [Georgios Moschovitis](https://gmosx.ninja).
+Copyright © 2024 [Georgios Moschovitis](https://gmosx.com).
